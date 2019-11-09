@@ -1,8 +1,9 @@
 package by.vkiva.model.view
 
 import javafx.collections.FXCollections
+import javafx.scene.chart.NumberAxis
+import javafx.scene.chart.XYChart
 import tornadofx.*
-import java.util.concurrent.ThreadLocalRandom
 
 private const val WINDOW_HEIGHT = 600.0
 private const val WINDOW_WIDTH = 1024.0
@@ -14,22 +15,31 @@ data class Actor(val x: Double, val y: Double)
 class WorldView : View("Actor Simulator") {
 
     private val actors = FXCollections.observableArrayList<Actor>()
-
-    override fun onDock() {
-        runAsync {
-            repeat((0..100).count()) {
-                val x = ThreadLocalRandom.current().nextDouble(0.0, WINDOW_WIDTH.toDouble())
-                val y = ThreadLocalRandom.current().nextDouble(0.0, WINDOW_HEIGHT.toDouble())
-                runLater {
-                    actors.add(Actor(x, y))
-                }
-                Thread.sleep(100)
-            }
-        }
+    private val chromosomeData = FXCollections.observableArrayList<XYChart.Data<Number, Number>>()
+    private val chromosomeSeries = XYChart.Series<Number, Number>(chromosomeData).also {
+        it.name = "Generation"
     }
 
-    override val root = stackpane {
-        setPrefSize(WINDOW_WIDTH, WINDOW_HEIGHT)
+//    override fun onDock() {
+//        runAsync {
+//            Plot.getPoints().forEach { (x, y) ->
+//                runLater {
+//                    chromosomeData.add(XYChart.Data(x, y))
+//                }
+//                Thread.sleep(100)
+//            }
+//        }
+//    }
+
+    override fun onBeforeShow() {
+        this.primaryStage.minWidth = 1500.0
+        this.primaryStage.minHeight = 800.0
+    }
+
+    override val root = form {
+        scatterchart("Genetic Algorithm", NumberAxis(), NumberAxis()) {
+            series("some siries", chromosomeData)
+        }
         group {
             bindChildren(actors) {
                 circle {
@@ -42,7 +52,14 @@ class WorldView : View("Actor Simulator") {
         }
         button("Add actor") {
             action {
-                actors.add(Actor(0.0, 0.0))
+                runAsync {
+                    Plot.getPoints().forEach { (x, y) ->
+                        runLater {
+                            chromosomeData.add(XYChart.Data(x, y))
+                        }
+                        Thread.sleep(100)
+                    }
+                }
             }
         }
     }

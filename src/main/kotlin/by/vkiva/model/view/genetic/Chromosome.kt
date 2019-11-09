@@ -4,6 +4,10 @@ data class Chromosome(
     val size: Int
 ) {
 
+    constructor(chromosome: List<Boolean>) : this(chromosome.size) {
+        value = chromosome.toBooleanArray()
+    }
+
     var value: BooleanArray = BooleanArray(size) { false }
 
     fun getAsInt(): Int {

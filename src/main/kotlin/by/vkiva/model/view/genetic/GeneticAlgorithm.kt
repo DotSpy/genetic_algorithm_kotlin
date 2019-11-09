@@ -1,24 +1,24 @@
 package by.vkiva.model.view.genetic
 
-import by.vkiva.model.view.Plot
+import by.vkiva.model.view.Population
 
 class GeneticAlgorithm(
     private val chromosomeCount: Int,
     private val chromosomeLength: Int,
     private val crossProbability: Double,
-    private val mutationProbability: Double,
-    private val maxGenerationNumber: Int
+    private val mutationProbability: Double
 ) {
 
     private val population: MutableList<Chromosome> = mutableListOf()
 
-    fun solve(oldPopulation: List<Chromosome>): List<List<Chromosome>> {
-        if (oldPopulation.isEmpty()) {
-            for (i in 1..chromosomeCount) {
-                population[i] = RandomChromosomeCreator.createRandomChromosome(chromosomeLength)
+    fun solve(oldPopulation: List<Chromosome>): Population {
+        return if (oldPopulation.isEmpty()) {
+            for (i in 0 until chromosomeCount) {
+                population.add(RandomChromosomeCreator.createRandomChromosome(chromosomeLength))
             }
+            FitnessFunction(mutationProbability, crossProbability).fit(population)
+        } else {
+            FitnessFunction(mutationProbability, crossProbability).fit(oldPopulation)
         }
-//feat function
-        return emptyList()
     }
 }
