@@ -21,6 +21,7 @@ class FunctionView : View() {
     private val probabilityOfMutation = SimpleDoubleProperty()
     private val middleFitnessValue = SimpleDoubleProperty()
     private val bestFitnessValue = SimpleDoubleProperty()
+    private val solution = SimpleDoubleProperty()
 
     override fun onBeforeShow() {
         this.primaryStage.minWidth = 1500.0
@@ -59,6 +60,7 @@ class FunctionView : View() {
                         val generationCount = generationCount.value
                         for (i in 1..generationCount) {
                             val uiData = getNextGeneration(generation)
+                            var currentSolution: Double = Double.MIN_VALUE
                             generation = uiData.generation
                             runLater {
                                 bestFitnessValue.value = uiData.bestFitnessValue
@@ -66,7 +68,11 @@ class FunctionView : View() {
                                 chromosomeData.clear()
                                 uiData.generationPoints.forEach { (x, y) ->
                                     chromosomeData.add(XYChart.Data(x, y))
+                                    if (y > currentSolution) {
+                                        currentSolution = y
+                                    }
                                 }
+                                solution.value = currentSolution
                             }
                             Thread.sleep(1500)
                         }
@@ -80,6 +86,11 @@ class FunctionView : View() {
             hbox {
                 label("Middle Fitness Value = ")
                 label(middleFitnessValue)
+            }
+            hbox {
+                label("Solution\\original = ")
+                label(solution)
+                label(" \\ ${Plot.max}")
             }
         }
     }

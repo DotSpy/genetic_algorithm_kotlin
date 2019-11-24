@@ -11,8 +11,8 @@ object Plot {
     private const val TICK = 0.001
 
     private val points: Map<Double, Double>
-    private val max: Double
-    private val min: Double
+    val max: Double
+    val min: Double
 
     init {
         val points = mutableMapOf<Double, Double>()
